@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="board">
+	
+	
+	<!-- 게시물 생성 -->
+	<insert id="insert">
+		insert into tradeboard(id, subject, tradegoods, content, nickname, createdate, price, gdsimg, gdsthumbimg)
+		values(#{id}, #{subject}, #{tradegoods}, #{content}, #{nickname}, now(), #{price}, #{gdsImg}, #{gdsThumbImg});
+	</insert>
+	
+	<!-- 게시물 내용 -->
+	<select id = "view" resultType="spring.mvc.board.dto.BoardDto">
+		select * 
+		from tradeboard
+		where bid = #{bid}
+	</select>
+	
+	<!-- 게시물 수정처리 -->
+	<update id="update">
+		update tradeboard
+		set subject = #{subject}, content = #{content}, tradegoods = #{tradegoods}, price = #{price}, gdsimg = #{gdsImg}, gdsthumbimg = #{gdsThumbImg}
+		where bid = #{bid}
+	</update>
+	
+	<!-- 게시물삭제 -->
+	<delete id="delete">
+		delete from tradeboard
+		where bid = #{bid}
+	</delete>
+	
+	
+	
+	<!-- 페이징 -->
+	<select id="paging" resultType="spring.mvc.board.dto.BoardDto">
+		select *
+		from tradeboard
+		<trim prefix = "where" prefixOverrides="and|or">
+			<if test = "searchType == 'tradegoods' and keyword != null and keyword != ''">
+				and tradegoods like concat('%', #{keyword}, '%')
+			</if>
+			<if test = "searchType == 'reg_id' and keyword != null and keyword != ''">
+				and id like concat('%', #{keyword}, '%')
+			</if>
+		</trim>
+		order by bid desc
+		limit #{startList}, #{listSize}
+	</select>
+	
+	<!-- 전체 페이지 수 -->
+	<select id="getBoardListCnt" resultType="Integer">
+		select count(*) as listCnt
+		from tradeboard
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test = "keyword != null and keyword != ''">
+				<if test = "searchType == 'tradegoods'">
+					and tradegoods like concat('%', #{keyword}, '%')
+				</if>
+				<if test = "searchType == 'reg_id'">
+					and id like concat('%', #{keyword}, '%')
+				</if>
+			</if>
+		</trim>
+	</select>
+	
+	
+</mapper>

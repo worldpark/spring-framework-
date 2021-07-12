@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+	 
+	 <!-- 해당유저인지 체크 -->
+	 <select id="loginCheck" resultType="String">
+	 	select name
+	 	from member
+	 	where id = #{id} and password = #{password}
+	 </select>
+	 
+	 <!-- 세션값 -->
+	 <select id="viewMember" resultType="spring.mvc.member.dto.MemberDto">
+	 	select *
+	 	from member
+	 	where id = #{id} and password = #{password}
+	 </select>
+	 
+	 <!-- 중복아이디 체크 -->
+	 <select id="idcount" parameterType="String" resultType="Integer">
+	 	select count(*) 
+	 	from member
+	 	where id = #{id}
+	 </select>
+	 
+	 <!-- 중복닉네임 체크 -->
+	 <select id="nickcount" parameterType="String" resultType="Integer">
+	 	select count(*) 
+	 	from member
+	 	where nickname = #{nickname}
+	 </select>
+	 
+	<!-- 회원가입처리 -->
+	<insert id="join" parameterType="spring.mvc.member.dto.MemberDto">
+		insert into member(id, nickname, name, password, address, ph)
+		values(
+		#{id},
+		#{nickname},
+		#{name},
+		#{password},
+		#{address},
+		#{ph}
+		)
+	</insert>
+	
+	<!-- 로그인처리 -->
+	 <select id="login" resultType="spring.mvc.member.dto.MemberDto">
+		SELECT
+		name, id, nickname, rank, password, address, ph, point, buypenpoint
+		FROM member
+		WHERE id = #{id} AND password = #{password}
+	</select>
+	 
+	<!-- 회원정보 데이터 -->
+	<select id = "view" resultType="spring.mvc.member.dto.MemberDto">
+		select  name, id, nickname, rank, password, address, ph, point, buypenpoint
+		from member
+		where id = #{id}
+	</select>
+	
+	<!-- 수정처리 -->
+	<update id="update">
+		update member
+		set nickname = #{nickname}, name = #{name}, address = #{address}, ph = #{ph}
+		where id = #{id}
+	</update>
+	
+	<!-- 회원탈퇴 -->
+	<delete id="delete">
+		delete from member
+		where id = #{id}
+	</delete>
+	
+	
+
+</mapper>
